@@ -37,6 +37,7 @@ env/
 .vscode/
 *.swp
 *.swo
+.cursorignore
 
 # 操作系统
 .DS_Store
