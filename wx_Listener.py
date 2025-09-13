@@ -194,9 +194,7 @@ def message_callback(chat_name, message_data):
 
 # 主程序入口
 if __name__ == "__main__":
-    # 创建全局消息处理器实例
-    global_processor = create_message_processor()
-    
+    # 使用全局消息处理器实例（已在main.py中创建）
     # 创建监听器实例，使用配置文件中的目标聊天列表
     # 同时设置回调函数，将消息转发到 MaiBot
     listener = WeChatListener(
@@ -210,11 +208,7 @@ if __name__ == "__main__":
     print("请确保已打开要监听的聊天窗口")
     print("-" * 50)
     
-    # 启动WebSocket监听器（在后台线程中运行）
-    import threading
-    websocket_thread = threading.Thread(target=global_processor.start_websocket_listener)
-    websocket_thread.daemon = True
-    websocket_thread.start()
+    # Router已在main.py中启动，这里不需要重复启动
     
     # 开始监听
     listener.start_listening()
