@@ -346,7 +346,10 @@ class MessageProcessor:
         try:
             # 记录接收到的消息
             logger.info(f"处理消息: {chat_name} - {message_data['sender']}: {message_data['content']}")
-            
+            logger.info(f"处理消息: {message_data} ")
+            # 转文字失败
+            if message_data['content'] == "你的网络较慢，请稍候再试。":
+                message_data['content'] = "[语音]"
             # 构建 MaiBot 消息体
             maibot_message = self._build_maibot_message(chat_name, message_data)
             

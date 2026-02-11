@@ -130,7 +130,7 @@ def main(redis_client=None):
 
     while True:
         try:
-           # 从队列获取消息，设置5秒超时
+          # 从队列获取消息，设置5秒超时
                 task = await redis.brpop([REDIS_QUEUE_KEY], timeout=5)
                 if task:
                     await process_task(task[1].decode('utf-8'))
