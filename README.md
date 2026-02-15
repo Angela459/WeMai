@@ -42,6 +42,11 @@
 - 微信桌面版（3.9.11.17）
 - Redis服务器
 
+### 微信关闭自动更新方法
+
+- 参考https://github.com/Skyler1n/WeChat3.9-32bit-Compatibility-Launcher
+- 注意一定要下32位版本的，该链接给的是3.9.12版本，亲测麦麦可用
+
 ### 安装步骤
 
 1. 安装redis,记录你的redis服务器地址及端口，用于.env文件修改，本地远端均可
