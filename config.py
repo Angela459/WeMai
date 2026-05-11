@@ -54,7 +54,7 @@ LOG_FORMAT = os.getenv('LOG_FORMAT', '%(asctime)s - %(levelname)s - %(message)s'
 LOG_DATE_FORMAT = os.getenv('LOG_DATE_FORMAT', '%Y-%m-%d %H:%M:%S')
 
 # 平台标识
-PLATFORM_ID = os.getenv('PLATFORM_ID', 'wxauto')
+PLATFORM_ID = os.getenv('PLATFORM_ID', 'pywechat')
 
 # 配置信息打印
 def print_config_info():

@@ -1,4 +1,3 @@
-# 环境变量和配置文件
 .env
 *.log
 
@@ -8,7 +7,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -24,13 +22,16 @@ var/
 .installed.cfg
 *.egg
 
-# 其它
-wxauto文件/
-
-# 虚拟环境
+# Virtual environments
+.venv/
 venv/
 ENV/
 env/
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
 
 # IDE
 .idea/
@@ -39,6 +40,6 @@ env/
 *.swo
 .cursorignore
 
-# 操作系统
+# OS
 .DS_Store
 Thumbs.db

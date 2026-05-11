@@ -10,6 +10,7 @@ from datetime import datetime
 from config import MAIBOT_API_URL, PLATFORM_ID
 from maim_message import Router, RouteConfig, TargetConfig, MessageBase, BaseMessageInfo, UserInfo, GroupInfo, Seg
 import os # Added for file existence check
+from wechat_adapter import send_message as send_wechat_message
 
 # 配置日志
 logging.basicConfig(
@@ -243,82 +244,20 @@ class MessageProcessor:
             
             def send_message():
                 try:
-                    from wxauto import WeChat
-                    import base64
-                    import tempfile
-                    import os
-                    wechat = WeChat()
-                    
-                    # 检查是否是base64编码的图片数据
-                    if isinstance(content, str) and (content.startswith('data:image/') or len(content) > 1000 and content.replace('+', '').replace('/', '').replace('=', '').isalnum()):
-                        # 可能是base64编码的图片
-                        try:
-                            # 尝试解码base64数据
-                            file_extension = '.png'  # 默认扩展名
-                            if content.startswith('data:image/'):
-                                # 处理data URL格式，提取文件类型
-                                header, encoded = content.split(",", 1)
-                                if 'gif' in header.lower():
-                                    file_extension = '.gif'
-                                elif 'jpeg' in header.lower() or 'jpg' in header.lower():
-                                    file_extension = '.jpg'
-                                elif 'png' in header.lower():
-                                    file_extension = '.png'
-                                image_data = base64.b64decode(encoded)
-                            else:
-                                # 处理纯base64编码，尝试检测文件类型
-                                image_data = base64.b64decode(content)
-                                # 检查GIF文件头
-                                if image_data.startswith(b'GIF8'):
-                                    file_extension = '.gif'
-                                # 检查JPEG文件头
-                                elif image_data.startswith(b'\xff\xd8\xff'):
-                                    file_extension = '.jpg'
-                                # 检查PNG文件头
-                                elif image_data.startswith(b'\x89PNG'):
-                                    file_extension = '.png'
-                            
-                            # 创建临时文件，使用正确的扩展名
-                            with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
-                                temp_file.write(image_data)
-                                temp_file_path = temp_file.name
-                            
-                            # 发送图片文件
-                            wechat.SendFiles(temp_file_path, receiver)
-                            logger.info(f"已发送base64图片到微信: {receiver}")
-                            
-                            # 删除临时文件
-                            try:
-                                os.unlink(temp_file_path)
-                            except:
-                                pass
-                                
-                        except Exception as e:
-                            logger.error(f"处理base64图片失败: {str(e)}")
-                            # 如果base64解码失败，尝试作为文字发送
-                            wechat.SendMsg(content, receiver)
-                            logger.info(f"base64解码失败，发送文字内容: {receiver} - {content[:50]}...")
-                    
-                    # 检查是否是图片/表情包路径
-                    elif isinstance(content, str) and (content.endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp')) or content.startswith('[') and ']' in content):
-                        # 如果是图片路径，使用SendFiles方法
-                        if os.path.exists(content):
-                            wechat.SendFiles(content, receiver)
-                            logger.info(f"已发送图片到微信: {receiver} - {content}")
-                        else:
-                            # 如果文件不存在，尝试发送文字内容
-                            wechat.SendMsg(content, receiver)
-                            logger.info(f"图片文件不存在，发送文字内容: {receiver} - {content}")
-                    else:
-                        # 普通文字消息
-                        wechat.SendMsg(content, receiver)
-                        logger.info(f"已发送文字消息到微信: {receiver} - {content}")
-                        
+                    msg_type = 'text'
+                    if isinstance(content, str) and os.path.exists(content):
+                        msg_type = 'file'
+                    elif isinstance(content, str) and (content.startswith('data:image/') or len(content) > 1000 and content.replace('+', '').replace('/', '').replace('=', '').isalnum()):
+                        msg_type = 'emoji'
+                    elif isinstance(content, str) and content.endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp')):
+                        msg_type = 'image'
+
+                    send_wechat_message(receiver=receiver, content=content, msg_type=msg_type)
                 except Exception as e:
-                    logger.error(f"发送微信消息失败: {str(e)}")
+                    logger.error(f"????????: {str(e)}")
                     raise e
             
-            # 在线程池中执行并等待完成
+            # ????????????
             loop = asyncio.get_event_loop()
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 await loop.run_in_executor(executor, send_message)
@@ -368,9 +307,9 @@ class MessageProcessor:
         # 检查是否包含图片路径特征
         has_path_separator = '\\' in content or '/' in content
         has_image_extension = any(ext in content.lower() for ext in ['.jpg', '.png', '.gif', '.bmp', '.jpeg'])
-        has_wxauto_path = 'wxauto文件' in content or '微信图片_' in content
+        has_pywechat_path = '??????????' in content or '????_' in content
         
-        return (has_path_separator and has_image_extension) or has_wxauto_path
+        return (has_path_separator and has_image_extension) or has_pywechat_path
 
     def _build_maibot_message(self, chat_name, message_data):
         """

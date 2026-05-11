@@ -1,11 +1,17 @@
 # WePush 项目依赖
 
 # 微信自动化相关
-uiautomation>=0.4.0
 Pillow>=9.0.0
 pywin32>=300
 psutil>=5.9.0
 pyperclip>=1.8.2
+pyautogui>=0.9.54
+pywinauto>=0.6.8
+pywin32-ctypes>=0.2.2
+emoji>=2.14.1
+pycaw>=20240210
+sounddevice>=0.5.1
+soundfile>=0.13.1
 
 # 消息队列相关
 redis>=4.5.0
