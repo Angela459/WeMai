@@ -315,7 +315,7 @@ async def main(args):
 
 if __name__ == "__main__":
     # 解析命令行参数
-    parser = argparse.ArgumentParser(description="WePush - 微信消息转发服务")
+    parser = argparse.ArgumentParser(description="WeMai - 微信消息转发服务")
     
     # 服务选择参数
     group = parser.add_mutually_exclusive_group()
@@ -335,7 +335,7 @@ if __name__ == "__main__":
     
     # 打印启动信息
     logger.info("=" * 50)
-    logger.info("WePush - 微信消息转发服务")
+    logger.info("WeMai - 微信消息转发服务")
     logger.info("=" * 50)
     
     if args.all:

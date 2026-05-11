@@ -193,4 +193,3 @@ WeMai 应连接 `maim_message` 的消息接口，而不是新版 WebUI 的鉴权
 
 - [MaiBot](https://github.com/MaiM-with-u/MaiBot)
 - [pywechat](https://github.com/Hello-Mr-Crab/pywechat)
-- [wepush](https://github.com/friend-nicen/wepush)
