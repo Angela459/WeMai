@@ -1,163 +1,196 @@
-﻿# WeMai - 寰俊鍒嗛害
+# WeMai
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Python-3.8+-blue.svg" alt="Python 3.8+">
-  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License">
+  <img src="https://img.shields.io/badge/Python-3.9+-blue.svg" alt="Python 3.9+">
   <img src="https://img.shields.io/badge/Platform-Windows-lightgrey.svg" alt="Platform Windows">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License">
 </div>
 
-## 鉂?鍓嶆帓鎻愰啋
+WeMai 是一个把微信和 MaiBot 连接起来的桥接程序，负责：
 
-鍘熶粨搴撳凡琚垹闄わ紝鏈粨搴撴槸鍘熶粨搴撶殑杩涗竴姝ョ淮鎶ょ増鏈?
+- 监听指定微信聊天并转发给 MaiBot
+- 接收 MaiBot 的回复并发回微信
+- 通过 Redis 作为消息队列做解耦
+- 在新版微信上自动选择合适的自动化后端
 
-鍘熶綔鑰咃細[aki66938](https://github.com/aki66938)
+当前 `dev` 分支已经从 `wxauto` 迁移到 `pywechat` / `pyweixin` 双后端适配方案：
 
-## 馃摑 椤圭洰绠€浠?
+- 微信 `4.1+` 默认走 `pyweixin`
+- 旧版微信可走 `pywechat`
+- 程序会自动检测微信版本，也支持环境变量强制指定后端
 
-**馃殌 WeMai鏄竴涓井淇℃秷鎭弻鍚戣浆鍙戠郴缁?*
+## 环境要求
 
-- 馃挰 **寰俊鐩戝惉**锛氬疄鏃剁洃鍚井淇℃秷鎭苟杞彂
-- 馃攧 **鍙屽悜閫氫俊**锛氭敮鎸佸井淇♀啋MaiBot鍜孧aiBot鈫掑井淇″弻鍚戞秷鎭紶閫?
-- 馃敡 **鐏垫椿閰嶇疆**锛氭敮鎸侀€氳繃鐜鍙橀噺鑷畾涔夐厤缃?
-- 馃洝锔?**绋冲畾鍙潬**锛氳嚜鍔ㄧ洃鎺у拰閲嶅惎鏈哄埗
-- 馃攧 **娑堟伅闃熷垪**锛氫娇鐢≧edis浣滀负娑堟伅涓棿浠?
-- 馃槝 **琛ㄦ儏鍖?*锛氭敮鎸佸彂閫佽〃鎯呭寘
-- 馃枿 **鍥剧墖璇嗗埆**锛氭敮鎸佽嚜鍔ㄨ瘑鍒亰澶╀腑鐨勫浘鐗?
+- Windows
+- Python `3.9+`
+- 已安装并登录 PC 微信
+- Redis
+- 已部署可用的 MaiBot 与 `maim_message`
 
-## 馃幆 鍔熻兘鐗规€?
+建议：
 
-| 妯″潡 | 涓昏鍔熻兘 | 鐗圭偣 |
-|------|---------|------|
-| 馃攧 **娑堟伅杞彂** | 鈥?寰俊娑堟伅鈫扢aiBot<br>鈥?MaiBot鍥炲鈫掑井淇?br>鈥?娑堟伅鏍煎紡杞崲<br>鈥?娑堟伅鍘婚噸 | 鍙屽悜閫氫俊 |
-| 馃洜锔?**缁熶竴绠＄悊** | 鈥?缁熶竴鍏ュ彛<br>鈥?鍛戒护琛屽弬鏁?br>鈥?鑷姩閲嶅惎<br>鈥?浼橀泤鍋滄 | 绋冲畾鍙潬 |
-| 馃敡 **鐏垫椿閰嶇疆** | 鈥?鐜鍙橀噺閰嶇疆<br>鈥?鑱婂ぉ瀵硅薄杩囨护<br>鈥?鑷畾涔夌洃鍚寖鍥?| 鏄撲簬瀹氬埗 |
-| 馃攳 **娑堟伅杩囨护** | 鈥?鑷姩杩囨护鑷繁鍙戦€佺殑娑堟伅<br>鈥?鎺掗櫎绯荤粺娑堟伅<br>鈥?鑷畾涔夋帓闄ゅ垪琛?| 绮惧噯杞彂 |
-| 馃搳 **鏃ュ織璁板綍** | 鈥?璇︾粏鏃ュ織<br>鈥?缇ょ粍ID鍝堝笇鏄犲皠<br>鈥?閿欒杩借釜 | 渚夸簬鎺掓煡 |
+- 微信 `4.1+` 用户开启 Windows 讲述人 / 无障碍支持后再使用 `pyweixin`
+- `MAIBOT_API_URL` 应连接到 `maim_message` 的消息接口，而不是 WebUI 的 `/ws`
 
-## 馃殌 蹇€熷紑濮?
+## 依赖管理
 
-### 鐜瑕佹眰
+本项目现在同时保留三份依赖相关文件，它们分工不同：
 
-- Python 3.8+
-- 寰俊妗岄潰鐗堬紙3.9.11.17锛?
-- Redis鏈嶅姟鍣?
+- [pyproject.toml](/Z:/MaiBot/WeMai/pyproject.toml) 是主依赖声明文件
+- [uv.lock](/Z:/MaiBot/WeMai/uv.lock) 是 `uv` 的锁文件，用于可复现安装
+- [requirements.txt](/Z:/MaiBot/WeMai/requirements.txt) 是给不用 `uv` 的用户准备的兼容安装方式
 
-### 寰俊鍏抽棴鑷姩鏇存柊鏂规硶
+推荐规则：
 
-- 鍙傝€僪ttps://github.com/Skyler1n/WeChat3.9-32bit-Compatibility-Launcher
-- 娉ㄦ剰涓€瀹氳涓?2浣嶇増鏈殑锛岃閾炬帴缁欑殑鏄?.9.12鐗堟湰锛屼翰娴嬮害楹﹀彲鐢?
+- 普通用户优先使用 `uv`
+- 维护者优先更新 `pyproject.toml`
+- 不使用 `uv` 的用户仍可用 `pip install -r requirements.txt`
 
-### 瀹夎姝ラ
+## 安装
 
-1. 瀹夎redis,璁板綍浣犵殑redis鏈嶅姟鍣ㄥ湴鍧€鍙婄鍙ｏ紝鐢ㄤ簬.env鏂囦欢淇敼锛屾湰鍦拌繙绔潎鍙?
+### 1. 准备 Redis
 
-2. 瀹夎maibot锛屽弬鑰僪ttps://github.com/MaiM-with-u/MaiBot
-   > [!INFO]
-   > - 璇疯嚜宸辩爺绌秏aibot锛屾壘鍒伴€傚悎鑷繁鐨勯儴缃叉柟寮忋€?
-   > - 杩欓噷浠呮彁渚涢儴缃叉€濊矾锛宮aibot鏈川涓婃槸涓€涓畬鍠勭殑闂幆鏈哄櫒浜猴紝濂规嫢鏈夋秷鎭敹鍙戝鐞嗘満鍒?
-   > - 娑堟伅鐨勫惊鐜湪浜庡叾鍐呴儴鏋勫缓鐨勬秷鎭摼锛岀被浼间簬浜虹殑鎬濊€冨拰鍥炲
-   > - 鍥犳锛屼綘鍙互灏嗗ス褰撲綔涓€涓嫭绔嬬殑鏈哄櫒浜猴紝鑷繁鍒涘缓涓€涓満鍣ㄤ汉妗嗘灦鍜屽ス杩涜浜や簰锛堟湰椤圭洰鍩轰簬姝ゆ€濊矾瀹炵幇锛夈€?
-   > 璇︾粏澶勭悊閫昏緫鍜宮aibot閮ㄧ讲鏂瑰紡鍙弬鑰冿細https://mp.weixin.qq.com/s/79ZdJqZ7VI0bFsg14Hf00w
-   > - 娉ㄦ剰璁板綍鏈嶅姟鍣ㄥ湴鍧€鍜宨p锛屽悗缁慨鏀?env鐜鍙橀噺瑕佺敤鍒?
+安装并启动 Redis，记下你的地址和端口，稍后需要写入 `.env`。
 
-3. 杩愯鏈」鐩?
-   > 濡傛灉鐪嬪畬浜嗗墠涓ゆ锛屼綘搴旇閮ㄧ讲濂戒簡灞炰簬鑷繁鐨剅edis鏁版嵁搴撳拰maibot
-   > 閭ｄ箞锛屽彲浠ュ紑濮嬮儴缃插拰杩愯鏈」鐩簡
-   ```bash
-   git clone https://github.com/Angela459/WeMai.git
-   cd wemai
-   pip install -r requirements.txt
-   cp .env.example .env
-   # 缂栬緫.env鏂囦欢锛岄厤缃綘鐨勭幆澧冨彉閲?
-   python main.py
-   ```
-   > - 鍦ㄥ畬鎴?env鏂囦欢鐨勪慨鏀瑰悗锛屽垵娆¤繍琛屽惎鍔ㄥ懡浠わ紝浣犲皢鍦ㄦ帶鍒跺彴鐪嬪埌绫讳技浜庯細
-   > - 2025-05-01 16:18:18 - INFO -   test -> 098f6bcd4621d373cade4e832627b4f6
-   > - 杩欐牱鐨刲og淇℃伅锛岃繖閲岃褰曚簡浣犲湪鏈」鐩缃殑鑱婂ぉ鐧藉悕鍗曪紝鍏朵腑鍖呭惈鐨勫氨鏄綘鐨勭兢缁刬d
-   > - 灏嗚繖涓猧d澶嶅埗绮樿创鍒颁綘鐨刴aibot鐨刡ot_config涓紝閲嶆柊杩愯maibot灏卞彲浠ュ畬鎴愮兢鑱婁氦浜?
+### 2. 准备 MaiBot
 
-### 鏈」鐩懡浠よ鍙傛暟
+先部署 MaiBot，并确认 `maim_message` 可正常工作。
 
-```
-usage: main.py [-h] [--all] [--wx-to-maibot] [--maibot-to-wx] [--target-chats TARGET_CHATS]
+参考：
 
-WeMai - 寰俊娑堟伅杞彂鏈嶅姟
+- [MaiBot](https://github.com/MaiM-with-u/MaiBot)
+- [MaiBot 开发文档](https://docs.mai-mai.org/develop/)
 
-optional arguments:
-  -h, --help            鏄剧ず甯姪淇℃伅
-  --all                 鍚姩鎵€鏈夋湇鍔★紙榛樿锛?
-  --wx-to-maibot        浠呭惎鍔ㄥ井淇″埌MaiBot鐨勬秷鎭浆鍙?
-  --maibot-to-wx        浠呭惎鍔∕aiBot鍒板井淇＄殑娑堟伅杞彂
-  --target-chats TARGET_CHATS
-                        瑕佺洃鍚殑寰俊鑱婂ぉ瀵硅薄锛屽涓敤閫楀彿鍒嗛殧
+### 3. 克隆项目
+
+```bash
+git clone https://github.com/Angela459/WeMai.git
+cd WeMai
 ```
 
-## 馃搻 绯荤粺鏋舵瀯
+### 4. 安装依赖
 
-```mermaid
-graph TD
-    A[main.py] --> B[wx_Listener.py]
-    A --> C[mq_Producer.py]
-    A --> D[mq_Consumer.py]
-    B --> E[wx_Processer.py]
-    B -->|鐩戝惉寰俊娑堟伅| F[寰俊]
-    E -->|杞崲娑堟伅鏍煎紡| G[MaiBot API]
-    C -->|鎺ユ敹MaiBot鍝嶅簲| G
-    C -->|鍐欏叆娑堟伅闃熷垪| H[Redis]
-    D -->|璇诲彇娑堟伅闃熷垪| H
-    D -->|鍙戦€佹秷鎭瘄 F
+推荐方式：`uv`
+
+```bash
+uv sync
 ```
 
-## 鈿欙笍 閰嶇疆璇存槑
+兼容方式：`pip`
 
-WeMai浣跨敤`.env`鏂囦欢杩涜閰嶇疆锛屼富瑕侀厤缃」鍖呮嫭锛?
+```bash
+pip install -r requirements.txt
+```
 
-| 閰嶇疆椤?| 璇存槑 | 榛樿鍊?|
-|-------|------|-------|
-| WX_TARGET_CHATS | 瑕佺洃鍚殑鑱婂ぉ瀵硅薄鍒楄〃 | 绌猴紙鐢卞懡浠よ鍙傛暟鍐冲畾锛?|
-| WX_LISTEN_ALL_IF_EMPTY | 鏄惁鐩戝惉鎵€鏈夎亰澶?| false |
-| WX_EXCLUDED_CHATS | 鎺掗櫎鐨勮亰澶╁璞?| 鏂囦欢浼犺緭鍔╂墜,寰俊鍥㈤槦,寰俊鏀粯 |
-| MAIBOT_API_URL | MaiBot maim_message WebSocket 鍦板潃锛堜笉鏄?WebUI `/ws`锛?| ws://your-maibot-host:8000/ws |
-| REDIS_URL | Redis杩炴帴鍦板潃 | redis://your-ip:your-port |
-| REDIS_QUEUE_KEY | Redis闃熷垪閿悕 | autoText |
-| API_HOST | API鐩戝惉鍦板潃 | 0.0.0.0 |
-| API_PORT | API鐩戝惉绔彛 | 8000 |
+### 5. 配置环境变量
 
-## 馃搵 浣跨敤璇存槑
+复制示例配置：
 
-1. **閰嶇疆MaiBot鐧藉悕鍗?*
-   
-   鍚姩绋嬪簭鍚庯紝鎺у埗鍙颁細鏄剧ず鐩戝惉鐨勮亰澶╁璞″強鍏跺搱甯孖D锛屽皢闇€瑕佺殑缇ょ粍ID娣诲姞鍒癕aiBot鐨勭櫧鍚嶅崟涓€?
+```bash
+cp .env.example .env
+```
 
-2. **娑堟伅娴佸悜**
+然后按你的环境修改 [\.env.example](/Z:/MaiBot/WeMai/.env.example) 中对应项，重点包括：
 
-   - **寰俊鈫扢aiBot**锛氱洃鍚井淇℃秷鎭紝杞崲鏍煎紡鍚庡彂閫佸埌MaiBot API
-   - **MaiBot鈫掑井淇?*锛氭帴鏀禡aiBot鍝嶅簲锛岄€氳繃Redis闃熷垪杞彂鍒板井淇?
+- `WX_TARGET_CHATS`
+- `MAIBOT_API_URL`
+- `REDIS_URL`
+- `REDIS_QUEUE_KEY`
+- `API_HOST`
+- `API_PORT`
 
-3. **鑷姩杩囨护**
+## 启动
 
-   - 鑷姩杩囨护鑷繁鍙戦€佺殑娑堟伅
-   - 鑷姩杩囨护绯荤粺娑堟伅
-   - 鍙厤缃帓闄ょ壒瀹氳亰澶╁璞?
+推荐方式：`uv`
 
-## 馃搶 娉ㄦ剰浜嬮」
+```bash
+uv run python main.py
+```
 
-> [!WARNING]
-> - 鏈」鐩粎渚涘涔犱氦娴佷娇鐢紝璇峰嬁鐢ㄤ簬闈炴硶鐢ㄩ€?
-> - 灏界UI鑷姩鍖栫浉瀵规潵璇撮闄╄緝灏忥紝浣嗗皬涓嶇瓑浜庢病鏈夊皝鍙烽闄╋紝璇疯皑鎱庝娇鐢?
-> - 椤圭洰澶勪簬寮€鍙戦樁娈碉紝鍙兘瀛樺湪鏈煡闂
-> - 浣跨敤鍓嶈纭繚宸蹭簡瑙ｅ苟鍚屾剰寰俊鐩稿叧鍗忚
-> - 鏈」鐩娇鐢–ursor缂栧啓锛屽緢鍙兘浠ｇ爜涓婁笉澶熶紭闆?
+兼容方式：`pip` / 当前 Python 环境
 
+```bash
+python main.py
+```
 
-## 馃摑 璁稿彲璇?
+如果你在本机使用根目录启动脚本，也可以直接运行：
 
-鏈」鐩噰鐢?MIT 璁稿彲璇?- 璇︽儏璇峰弬闃?[LICENSE](LICENSE) 鏂囦欢
+- [start_services.bat](/Z:/MaiBot/start_services.bat)
 
-## 馃檹 鑷磋阿
+这个脚本当前已按本机环境调整，`WeMai` 会通过 `uv run python .\main.py` 启动。
 
-- [MaiBot](https://github.com/MaiM-with-u/MaiBot) - 鎻愪緵API鎺ュ彛鏀寔
-- [pywechat](https://github.com/Hello-Mr-Crab/pywechat) - 鎻愪緵寰俊鑷姩鍖栨敮鎸?
-- [wepush](https://github.com/friend-nicen/wepush) - 鎻愪緵妗嗘灦璁捐鍩虹鍙婄伒鎰?
-- 鎵€鏈夎础鐚€呭拰浣跨敤鑰?
+## 自动后端选择
 
+WeMai 会在运行时自动探测微信环境：
+
+- 检测到微信 `4.1+` 时，使用 `pyweixin`
+- 检测到旧版微信环境时，使用 `pywechat`
+
+也可以通过环境变量手动覆盖：
+
+```env
+WECHAT_BACKEND=pyweixin
+```
+
+可选值：
+
+- `pyweixin`
+- `pywechat`
+
+## 常用配置项
+
+| 配置项 | 说明 |
+|---|---|
+| `WX_TARGET_CHATS` | 要监听的微信聊天对象，多个用英文逗号分隔 |
+| `WX_LISTEN_ALL_IF_EMPTY` | 未指定目标时是否监听全部聊天 |
+| `WX_EXCLUDED_CHATS` | 排除的聊天对象 |
+| `MAIBOT_API_URL` | `maim_message` 的消息接口地址 |
+| `REDIS_URL` | Redis 连接地址 |
+| `REDIS_QUEUE_KEY` | Redis 队列名 |
+| `API_HOST` | WeMai API 监听地址 |
+| `API_PORT` | WeMai API 监听端口 |
+| `PLATFORM_ID` | 平台标识，通常保持默认即可 |
+
+## 目录说明
+
+| 路径 | 说明 |
+|---|---|
+| [main.py](/Z:/MaiBot/WeMai/main.py) | 程序入口 |
+| [wechat_adapter.py](/Z:/MaiBot/WeMai/wechat_adapter.py) | 微信后端适配层 |
+| [wx_Listener.py](/Z:/MaiBot/WeMai/wx_Listener.py) | 微信监听 |
+| [wx_Processer.py](/Z:/MaiBot/WeMai/wx_Processer.py) | 微信消息转 MaiBot 消息格式 |
+| [mq_Producer.py](/Z:/MaiBot/WeMai/mq_Producer.py) | MaiBot 回复写入 Redis |
+| [mq_Consumer.py](/Z:/MaiBot/WeMai/mq_Consumer.py) | 从 Redis 取消息并回发微信 |
+| [pywechat](/Z:/MaiBot/WeMai/pywechat) | vendored `pywechat` |
+| [pyweixin](/Z:/MaiBot/WeMai/pyweixin) | vendored `pyweixin` |
+
+## 故障排查
+
+### 1. 连接 `/ws` 返回 403
+
+优先检查你是不是把 `MAIBOT_API_URL` 指到了 WebUI 的 `/ws`。  
+WeMai 应连接 `maim_message` 的消息接口，而不是新版 WebUI 的鉴权 WebSocket。
+
+### 2. `pyweixin` 找不到微信主界面
+
+如果报错类似“无法识别定位到微信主界面”，通常需要：
+
+- 确认微信已登录
+- 确认 Windows 讲述人 / 无障碍支持已开启
+- 再重新启动 WeMai
+
+### 3. 提示“查无此人”
+
+这通常说明 `WX_TARGET_CHATS` 里的聊天名和微信里的实际备注名 / 群名不一致。
+
+## 注意事项
+
+- 本项目仅供学习和交流使用
+- UI 自动化始终有一定风险，请谨慎使用
+- 不要把 `.env`、日志文件或本地虚拟环境提交到仓库
+
+## 致谢
+
+- [MaiBot](https://github.com/MaiM-with-u/MaiBot)
+- [pywechat](https://github.com/Hello-Mr-Crab/pywechat)
+- [wepush](https://github.com/friend-nicen/wepush)
